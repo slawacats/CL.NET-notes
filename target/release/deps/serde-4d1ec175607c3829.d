@@ -1,0 +1,14 @@
+/home/nd1/extra/projhandler/projects/software/clorine-pack/notes/cli/target/release/deps/serde-4d1ec175607c3829.d: /home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/nd1/extra/projhandler/projects/software/clorine-pack/notes/cli/target/release/build/serde-6f5bd30ed01392ea/out/private.rs
+
+/home/nd1/extra/projhandler/projects/software/clorine-pack/notes/cli/target/release/deps/libserde-4d1ec175607c3829.rlib: /home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/nd1/extra/projhandler/projects/software/clorine-pack/notes/cli/target/release/build/serde-6f5bd30ed01392ea/out/private.rs
+
+/home/nd1/extra/projhandler/projects/software/clorine-pack/notes/cli/target/release/deps/libserde-4d1ec175607c3829.rmeta: /home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/nd1/extra/projhandler/projects/software/clorine-pack/notes/cli/target/release/build/serde-6f5bd30ed01392ea/out/private.rs
+
+/home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/home/nd1/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/home/nd1/extra/projhandler/projects/software/clorine-pack/notes/cli/target/release/build/serde-6f5bd30ed01392ea/out/private.rs:
+
+# env-dep:OUT_DIR=/home/nd1/extra/projhandler/projects/software/clorine-pack/notes/cli/target/release/build/serde-6f5bd30ed01392ea/out
