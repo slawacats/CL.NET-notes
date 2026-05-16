@@ -21,30 +21,31 @@ enum Commands {
 
         
         #[arg(short, long)]
-        critical: Option<bool>
+        special: bool
     },
     New {
         name: String,
         content: Option<String>,
 
         #[arg(short, long)]
-        critical: Option<bool>,
+        special: bool,
     },
     Delete {
         index: usize,
 
         
         #[arg(short, long)]
-        critical: Option<bool>,
+        special: bool,
 
         #[arg(short, long)]
-        noconfirm: Option<bool>,
-    }
+        force: bool,
+    },
+    PrintJson // you can use this to create your own interface
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Root {
-    critical: Vec<Task>,
+    special: Vec<Task>,
     common: Vec<Task>
 }
 
@@ -61,30 +62,25 @@ async fn main() -> Result<()> {
     match cli.command {
         Commands::List => {
             let data = get_data().await?;
-            // if let Some(critical_notes) = data.critical {
-            //     for i in critical_notes { println!("{}", format!("! {}", i.name).red()) }
-            // }
-            // if let Some(common_notes) = data.common {
-            //     for i in common_notes { println!("{}", i.name) }
-            // }
-            for (i, v) in data.critical.iter().enumerate() {
+
+            for (i, v) in data.special.iter().enumerate() {
                 println!("{}. {}", i.to_string().yellow(), format!("! {}", v.name).red());
             }
             for (i, v) in data.common.iter().enumerate() {
                 println!("{}. - {}", i.to_string().yellow(), v.name);
             }
         },
-        Commands::Cat { index, critical } => {
+        Commands::Cat { index, special } => {
             let data = get_data().await?;
 
-            match critical {
-                Some(true) => {
+            match special {
+                true => {
                     println!("{}. {}:", index.to_string().yellow(),
-                        format!("! {}", data.critical[index].name).red()
+                        format!("! {}", data.special[index].name).red()
                     );
-                    if let Some(content) = &data.critical[index].content { println!("{}", content);}
+                    if let Some(content) = &data.special[index].content { println!("{}", content);}
                 },
-                Some(false) | None => {
+                false => {
                     println!("{}. - {}:", index.to_string().yellow(),
                         format!("{}", data.common[index].name).yellow()
                     );
@@ -92,34 +88,34 @@ async fn main() -> Result<()> {
                 }
             }
         },
-        Commands::New { name, content, critical } => {
+        Commands::New { name, content, special } => {
             let mut data = get_data().await?;
 
-            match critical {
-                Some(true) => {
-                    data.critical.push(Task {name: name, content: content});
+            match special {
+                true => {
+                    data.special.push(Task {name: name, content: content});
                 },
-                Some(false) | None => {
+                false => {
                     data.common.push(Task {name: name, content: content});
                 }
             }
 
             let _ = save_data(data).await?;
-        }
-        Commands::Delete { index, critical, noconfirm } => {
+        },
+        Commands::Delete { index, special, force } => {
             let mut data = get_data().await?;
 
-            match critical {
-                Some(true) => {
-                    if noconfirm == Some(true) { let _ = data.critical.remove(index); } else {
-                        println!("Задача: {}", data.critical[index].name.red());
+            match special {
+                true => {
+                    if force == true { let _ = data.special.remove(index); } else {
+                        println!("Задача: {}", data.special[index].name.red());
                         if Confirm::new().with_prompt("Удалить?").interact()? {
-                            let _ = data.critical.remove(index);
+                            let _ = data.special.remove(index);
                         }
                     }
                 },
-                Some(false) | None => {
-                    if noconfirm == Some(true) { let _ = data.common.remove(index); } else {
+                false => {
+                    if force == true { let _ = data.common.remove(index); } else {
                         println!("Задача: {}", data.common[index].name.yellow());
                         if Confirm::new().with_prompt("Удалить?").interact()? {
                             let _ = data.common.remove(index);
@@ -129,6 +125,11 @@ async fn main() -> Result<()> {
             }
 
             let _ = save_data(data).await?;
+        },
+        Commands::PrintJson => {
+            let data = get_data().await?;
+
+            println!("{}", serde_json::to_string(&data)?);
         }
     }
 
@@ -143,7 +144,7 @@ async fn get_data() -> Result<Root> {
     if data_file.exists() {
         Ok(ron::from_str(&fs::read_to_string(data_file).await?)?)
     } else {
-        Ok(Root{critical: Vec::new(), common: Vec::new()})
+        Ok(Root{special: Vec::new(), common: Vec::new()})
     }
 }
 
@@ -152,7 +153,9 @@ async fn save_data(data: Root) -> Result<()> {
     data_dir.push(".clorine/notes");
     if !data_dir.exists() { fs::create_dir_all(&data_dir).await?; }
     let data_file = data_dir.join("data.json");
-    fs::write(data_file, ron::to_string(&data)?).await?;
+    fs::write(data_file, ron::ser::to_string_pretty(&data,
+            ron::ser::PrettyConfig::new().depth_limit(4).indentor("  ".to_string())
+            )?).await?;
     Ok(())
 }
 
