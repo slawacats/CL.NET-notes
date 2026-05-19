@@ -15,21 +15,26 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
+    /// Display your notes without styles
     List,
+    ///Display your notes with styles
     Display,
-    Cat {
+    /// Display note with content by index
+    Cat { 
         index: usize,
         
         #[arg(short, long)]
         special: bool
     },
-    New {
+    /// Create new note
+    New { 
         name: String,
         content: Option<String>,
 
         #[arg(short, long)]
         special: bool,
     },
+    /// Delete note by index
     Delete {
         index: usize,
         
@@ -39,26 +44,31 @@ enum Commands {
         #[arg(short, long)]
         force: bool,
     },
-    PrintJson // you can use this to create your own interface
+    /// You can use this to create your own interface for CL.NET Notes
+    PrintJson 
 }
 
+// data.ron struct
 #[derive(Debug, Deserialize, Serialize)]
 struct Root {
     special: Vec<Task>,
     common: Vec<Task>
 }
 
+// task struct
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 struct Task {
     name: String,
     content: Option<String>
 }
 
+// config.toml struct
 #[derive(Debug, Deserialize)]
 struct Config {
     style: Option<Style>,
 }
 
+// config.toml [styles] struct
 #[derive(Debug, Deserialize)]
 struct Style {
     #[serde(default)]
