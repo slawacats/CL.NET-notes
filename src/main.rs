@@ -16,9 +16,9 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
     List,
+    Display,
     Cat {
         index: usize,
-
         
         #[arg(short, long)]
         special: bool
@@ -32,7 +32,6 @@ enum Commands {
     },
     Delete {
         index: usize,
-
         
         #[arg(short, long)]
         special: bool,
@@ -55,6 +54,44 @@ struct Task {
     content: Option<String>
 }
 
+#[derive(Debug, Deserialize)]
+struct Config {
+    style: Option<Style>,
+}
+
+#[derive(Debug, Deserialize)]
+struct Style {
+    #[serde(default)]
+    before_text: String,
+
+    #[serde(default)]
+    after_text: String,
+
+    #[serde(default)]
+    before_specials: String,
+
+    #[serde(default)]
+    after_specials: String,
+
+    #[serde(default)]
+    before_commons: String,
+
+    #[serde(default)]
+    after_commons: String,
+
+    #[serde(default)]
+    before_special_unit: String,
+
+    #[serde(default)]
+    after_special_unit: String,
+
+    #[serde(default)]
+    before_common_unit: String,
+
+    #[serde(default)]
+    after_common_unit: String,
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
     let cli = Cli::parse();
@@ -68,6 +105,44 @@ async fn main() -> Result<()> {
             }
             for (i, v) in data.common.iter().enumerate() {
                 println!("{}. - {}", i.to_string().yellow(), v.name);
+            }
+        },
+        Commands::Display => {
+            let data = get_data().await?;
+
+            let conf = get_config().await?;
+
+            if let Some(style) = conf.style {
+                print!("{}", style.before_text);
+                
+                print!("{}", style.before_specials);
+                for (i, v) in data.special.iter().enumerate() {
+                    println!("{}{}. {}{}", style.before_special_unit,
+                        i.to_string().yellow(),
+                        format!("! {}", v.name).red(),
+                        style.after_special_unit
+                    );
+                }
+                print!("{}", style.after_specials);
+
+                print!("{}", style.before_commons);
+                for (i, v) in data.common.iter().enumerate() {
+                    println!("{}{}. - {}{}", style.before_common_unit,
+                        i.to_string().yellow(),
+                        v.name,
+                        style.after_common_unit
+                    );
+                }
+                print!("{}", style.after_commons);
+                
+                print!("{}", style.after_text);
+            } else {
+                for (i, v) in data.special.iter().enumerate() {
+                    println!("{}. {}", i.to_string().yellow(), format!("! {}", v.name).red());
+                }
+                for (i, v) in data.common.iter().enumerate() {
+                    println!("{}. - {}", i.to_string().yellow(), v.name);
+                }
             }
         },
         Commands::Cat { index, special } => {
@@ -159,3 +234,14 @@ async fn save_data(data: Root) -> Result<()> {
     Ok(())
 }
 
+async fn get_config() -> Result<Config> {
+    let mut data_dir = home_dir().ok_or_else(|| anyhow::anyhow!("Home directory not found"))?;
+    data_dir.push(".clorine/notes");
+    if !data_dir.exists() { fs::create_dir_all(&data_dir).await?; }
+    let data_file = data_dir.join("config.toml");
+    if data_file.exists() {
+        Ok(toml::from_str(&fs::read_to_string(data_file).await?)?)
+    } else {
+        Ok(Config{style: None})
+    }
+}
